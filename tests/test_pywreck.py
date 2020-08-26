@@ -144,8 +144,8 @@ def test_cookies(loop, handler, port):
 @pytest.mark.parametrize("handler", (handle_chunked,), indirect=True)
 def test_chunked(loop, handler, port):
     response = loop.run_until_complete(
-        pywreck.get("localhost", "/", port=port, ssl=False)
+        pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
     )
     assert response.status == 200
     assert response.headers == {"transfer-encoding": "chunked"}
-    assert response.data == b"chunk_foochunk_bar"
+    assert response.data == (b"*" * 16 + b"foo")

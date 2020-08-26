@@ -47,7 +47,7 @@ async def handle_chunked(reader, writer):
     writer.write(b"\r\n")
     await writer.drain()
 
-    chunks = [b"chunk_foo", b"chunk_bar", b""]
+    chunks = [b"*" * 16, b"foo", b""]
     for chunk in chunks:
         hex_len = b"%x\r\n" % len(chunk)
         writer.write(hex_len)
