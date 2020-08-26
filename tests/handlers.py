@@ -1,8 +1,12 @@
+import asyncio
+
+
 async def read_request(reader):
     request = []
     content_length = 0
     while True:
-        line = await reader.readline()
+        coro = reader.readline()
+        line = await asyncio.wait_for(coro, timeout=0.1)
         request.append(line)
         if not line.rstrip():
             break
@@ -10,7 +14,8 @@ async def read_request(reader):
         if line.lower().startswith(b"content-length"):
             content_length = int(line[15:])
 
-    data = await reader.readexactly(content_length)
+    coro = reader.readexactly(content_length)
+    data = await asyncio.wait_for(coro, timeout=0.1)
     request.append(data)
     request = b"".join(request)
     return request

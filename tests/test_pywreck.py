@@ -64,6 +64,7 @@ def test_basic(loop, handler, port, method):
             headers={"user-agent": "pywreck test, yo!"},
             port=port,
             ssl=False,
+            timeout=0.2,
         )
     )
     assert response.status == 200
@@ -93,6 +94,7 @@ def test_payload(loop, handler, port):
             payload=b"payload, yo!",
             port=port,
             ssl=False,
+            timeout=0.2,
         )
     )
     assert response.status == 200
@@ -123,7 +125,7 @@ def test_default_headers(loop, handler, port):
 @pytest.mark.parametrize("handler", (handle_multi_response_headers,), indirect=True)
 def test_multi_line_response_header(loop, handler, port):
     response = loop.run_until_complete(
-        pywreck.get("localhost", "/", port=port, ssl=False)
+        pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
     )
     assert response.status == 200
     assert response.headers == {"foo": "1,2"}
@@ -133,7 +135,7 @@ def test_multi_line_response_header(loop, handler, port):
 @pytest.mark.parametrize("handler", (handle_cookies,), indirect=True)
 def test_cookies(loop, handler, port):
     response = loop.run_until_complete(
-        pywreck.get("localhost", "/", port=port, ssl=False)
+        pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
     )
     assert response.status == 200
     assert response.headers == {"set-cookie": "foo=bar;boo=baz"}
