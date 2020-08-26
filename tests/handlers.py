@@ -33,8 +33,8 @@ async def handle_echo(reader, writer):
 async def handle_multi_response_headers(reader, writer):
     await read_request(reader)
     writer.write(b"HTTP/1.1 200 OK\r\n")
-    writer.write(b"foo:1\r\n")
-    writer.write(b"foo:2\r\n")
+    writer.write(b"foo:1:1\r\n")
+    writer.write(b"foo:2:2\r\n")
     writer.write(b"\r\n")
     await writer.drain()
     writer.close()

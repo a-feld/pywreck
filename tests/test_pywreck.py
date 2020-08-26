@@ -128,7 +128,7 @@ def test_multi_line_response_header(loop, handler, port):
         pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
     )
     assert response.status == 200
-    assert response.headers == {"foo": "1,2"}
+    assert response.headers == {"foo": "1:1,2:2"}
     assert response.data == b""
 
 
