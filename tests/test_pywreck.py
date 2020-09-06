@@ -56,7 +56,7 @@ def port(handler):
     ("get", "head", "post", "put", "delete", "connect", "options", "trace", "patch"),
 )
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
-def test_basic(loop, handler, port, method):
+def test_basic(loop, port, method):
     response = loop.run_until_complete(
         getattr(pywreck, method)(
             "localhost",
@@ -85,7 +85,7 @@ def test_basic(loop, handler, port, method):
 
 
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
-def test_payload(loop, handler, port):
+def test_payload(loop, port):
     response = loop.run_until_complete(
         pywreck.post(
             "localhost",
@@ -110,7 +110,7 @@ def test_payload(loop, handler, port):
 
 
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
-def test_default_headers(loop, handler, port):
+def test_default_headers(loop, port):
     response = loop.run_until_complete(
         pywreck.get("localhost", "/", port=port, ssl=False)
     )
@@ -123,7 +123,7 @@ def test_default_headers(loop, handler, port):
 
 
 @pytest.mark.parametrize("handler", (handle_multi_response_headers,), indirect=True)
-def test_multi_line_response_header(loop, handler, port):
+def test_multi_line_response_header(loop, port):
     response = loop.run_until_complete(
         pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
     )
@@ -133,7 +133,7 @@ def test_multi_line_response_header(loop, handler, port):
 
 
 @pytest.mark.parametrize("handler", (handle_cookies,), indirect=True)
-def test_cookies(loop, handler, port):
+def test_cookies(loop, port):
     response = loop.run_until_complete(
         pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
     )
@@ -142,7 +142,7 @@ def test_cookies(loop, handler, port):
 
 
 @pytest.mark.parametrize("handler", (handle_chunked,), indirect=True)
-def test_chunked(loop, handler, port):
+def test_chunked(loop, port):
     response = loop.run_until_complete(
         pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
     )
