@@ -85,7 +85,7 @@ async def request(
     port: int = 443,
     timeout: Optional[float] = 5.0,
     ssl: Union[bool, ssl.SSLContext] = True,
-):
+) -> Response:
     """Make a full HTTP request
 
     Drives a full request/response cycle using the HTTP/1.1 protocol.
