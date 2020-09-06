@@ -1,7 +1,7 @@
 pywreck
 =======
 
-A compact HTTP/1.1 client that's "good enough" for many cases. The code has no dependencies, is a single source file, and implements no advanced parsing or error handling.
+A compact HTTP/1.1 client that's "good enough" for many cases. The code has no dependencies, is a single source file, and implements no advanced parsing or error handling. For more detailed parameter descriptions, see the :doc:`api` page.
 
 Quickstart
 ==========
@@ -21,10 +21,7 @@ Additionally, :py:meth:`pywreck.request` is provided for custom HTTP methods.
     asyncio.run(main())
 
 
-API
-===
-
 .. toctree::
-   :maxdepth: 2
+    :hidden:
 
-   api
+    api

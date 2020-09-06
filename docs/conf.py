@@ -6,8 +6,9 @@
 
 # -- Path setup --------------------------------------------------------------
 
-import pywreck
 import sphinx_bootstrap_theme
+
+import pywreck
 
 # -- Project information -----------------------------------------------------
 
@@ -49,6 +50,13 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 #
 html_theme = "bootstrap"
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+
+html_theme_options = {
+    "navbar_pagenav": False,
+    "globaltoc_includehidden": "false",
+}
+
+html_show_sphinx = False
 
 # -- Extension configuration -------------------------------------------------
 
