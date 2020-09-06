@@ -61,3 +61,7 @@ async def handle_cookies(reader, writer):
     writer.write(b"set-cookie: foo=bar\r\n")
     writer.write(b"set-cookie: boo=baz\r\n")
     writer.write(b"\r\n")
+
+
+async def handle_close(reader, writer):
+    writer.transport.abort()

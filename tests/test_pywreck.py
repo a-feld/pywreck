@@ -20,6 +20,7 @@ import pytest
 import pywreck
 from handlers import (
     handle_chunked,
+    handle_close,
     handle_cookies,
     handle_echo,
     handle_multi_response_headers,
@@ -149,3 +150,11 @@ def test_chunked(loop, port):
     assert response.status == 200
     assert response.headers == {"transfer-encoding": "chunked"}
     assert response.data == (b"*" * 16 + b"foo")
+
+
+@pytest.mark.parametrize("handler", (handle_close,), indirect=True)
+def test_protocol_error(loop, port):
+    with pytest.raises(ConnectionResetError):
+        loop.run_until_complete(
+            pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
+        )

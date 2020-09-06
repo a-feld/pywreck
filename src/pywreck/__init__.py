@@ -199,7 +199,7 @@ async def request(
         writer.close()
         try:
             await writer.wait_closed()
-        except asyncio.TimeoutError:
+        except (OSError, asyncio.TimeoutError):
             writer.transport.abort()
 
 
