@@ -83,7 +83,7 @@ async def request(
     payload: bytes = b"",
     headers: Optional[Dict[str, str]] = None,
     port: int = 443,
-    timeout: Optional[float] = None,
+    timeout: Optional[float] = 5.0,
     ssl: Union[bool, ssl.SSLContext] = True,
 ):
     """Make a full HTTP request
@@ -114,7 +114,7 @@ async def request(
     :param port: (optional) The TCP port used for the connection. Default: 443
     :type port: int
     :param timeout: (optional) Timeout in seconds, used when retrieving a response.
-        Default: no timeout.
+        Default: 5 seconds.
     :type timeout: float
     :param ssl: (optional) Indicates if SSL is to be used in
         establishing the connection. Also accepts an SSLContext object.
