@@ -2,10 +2,13 @@
 pywreck
 =======
 
-|ci| |docs| |black|
+|ci| |coverage| |docs| |black|
 
 .. |ci| image:: https://img.shields.io/github/workflow/status/a-feld/pywreck/CI/main
    :target: https://github.com/a-feld/pywreck/actions?query=workflow%3ACI
+
+.. |coverage| image:: https://img.shields.io/codecov/c/github/a-feld/pywreck/main
+    :target: https://codecov.io/gh/a-feld/pywreck
 
 .. |docs| image:: https://img.shields.io/badge/docs-available-brightgreen.svg
     :target: https://a-feld.github.io/pywreck
