@@ -1,5 +1,17 @@
+
 pywreck
 =======
+
+|ci| |docs| |black|
+
+.. |ci| image:: https://img.shields.io/github/workflow/status/a-feld/pywreck/CI/main
+   :target: https://github.com/a-feld/pywreck/actions?query=workflow%3ACI
+
+.. |docs| image:: https://img.shields.io/badge/docs-available-brightgreen.svg
+    :target: https://a-feld.github.io/pywreck
+
+.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 A small, not so great async Python HTTP client.
 
