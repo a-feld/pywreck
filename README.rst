@@ -25,14 +25,8 @@ Usage
 
 .. code-block:: python
 
-    import asyncio
-    import pywreck
-
-    async def main():
-        response = await pywreck.get("www.example.com", "/")
-        print(response)
-
-    asyncio.run(main())
+    response = await pywreck.get("www.example.com", "/")
+    print(response.status, response.headers, response.data)
 
 Why?
 ----
