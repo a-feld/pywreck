@@ -49,10 +49,7 @@ class _HttpWriter:
     def __init__(self, writer, timeout=0.1):
         self.writer = writer
         self.timeout = timeout
-
-    @property
-    def transport(self):
-        return self.writer.transport
+        self.transport = writer.transport
 
     def write(self, data: Union[bytes, str]) -> None:
         if not isinstance(data, bytes):
