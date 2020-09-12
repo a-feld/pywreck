@@ -27,7 +27,7 @@ except Exception:  # pragma: no cover
 
 
 class _HttpReader:
-    def __init__(self, reader, timeout=0.1):
+    def __init__(self, reader, timeout):
         self.reader = reader
         self.timeout = timeout
 
@@ -46,7 +46,7 @@ class _HttpReader:
 
 
 class _HttpWriter:
-    def __init__(self, writer, timeout=0.1):
+    def __init__(self, writer, timeout):
         self.writer = writer
         self.timeout = timeout
         self.transport = writer.transport
