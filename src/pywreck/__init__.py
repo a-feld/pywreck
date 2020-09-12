@@ -69,7 +69,7 @@ class Response:
     """HTTP Response Container"""
 
     status: int
-    headers: dict
+    headers: Dict[str, str]
     data: bytes
 
 
