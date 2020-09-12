@@ -51,10 +51,11 @@ class _HttpWriter:
         self.timeout = timeout
         self.transport = writer.transport
 
-    def write(self, data: Union[bytes, str]) -> None:
-        if not isinstance(data, bytes):
-            data = data.encode("latin1")
+    def write(self, data: bytes) -> None:
         return self.writer.write(data)
+
+    def write_ascii(self, data: str) -> None:
+        return self.writer.write(data.encode("latin1"))
 
     def close(self) -> None:
         return self.writer.close()
@@ -125,7 +126,7 @@ async def request(
 
     try:
         request = f"{method} {uri} HTTP/1.1\r\n"
-        writer.write(request)
+        writer.write_ascii(request)
 
         request_headers = {"host": host, "user-agent": f"pywreck/{__version__}"}
         if payload:
@@ -135,14 +136,14 @@ async def request(
             request_headers.update(headers)
 
         for header_name, header_value in request_headers.items():
-            writer.write(
+            writer.write_ascii(
                 "{header_name}:{header_value}\r\n".format(
                     header_name=header_name, header_value=header_value
                 )
             )
 
         # Finish request metadata section
-        writer.write("\r\n")
+        writer.write(b"\r\n")
 
         # Send payload
         writer.write(payload)
