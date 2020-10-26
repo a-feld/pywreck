@@ -33,7 +33,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.7', '3.8']
+        python-version: ['3.7', '3.8', '3.9']
 
     runs-on: ubuntu-latest
 
@@ -57,9 +57,9 @@ jobs:
       run: tox -vv
       env:
         TOXENV: lint
-      if: matrix.python-version == 3.8
+      if: matrix.python-version == 3.9
     - name: Docs
       run: tox -vv
       env:
         TOXENV: docs
-      if: matrix.python-version == 3.8
+      if: matrix.python-version == 3.9
