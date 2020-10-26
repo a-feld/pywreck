@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Reference &#8212; pywreck 0.1.3 documentation</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="pywreck" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          pywreck</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="index.html" title="Previous Chapter: pywreck"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; pywreck</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/api.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="api-reference">
+<span id="api"></span><h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pywreck">
+<span id="generic-api"></span><h2>Generic API<a class="headerlink" href="#module-pywreck" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pywreck.Response">
+<em class="property">class </em><code class="sig-prename descclassname">pywreck.</code><code class="sig-name descname">Response</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">status</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span></em>, <em class="sig-param"><span class="n">headers</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)">bytes</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pywreck.html#Response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pywreck.Response" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP Response Container</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pywreck.request">
+<em class="property">async </em><code class="sig-prename descclassname">pywreck.</code><code class="sig-name descname">request</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">host</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">uri</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)">bytes</a></span> <span class="o">=</span> <span class="default_value">b''</span></em>, <em class="sig-param"><span class="n">headers</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Dict<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">port</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span> <span class="o">=</span> <span class="default_value">443</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">5.0</span></em>, <em class="sig-param"><span class="n">ssl</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/ssl.html#ssl.SSLContext" title="(in Python v3.9)">ssl.SSLContext</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pywreck.Response" title="pywreck.Response">pywreck.Response</a><a class="reference internal" href="_modules/pywreck.html#request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pywreck.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a full HTTP request</p>
+<p>Drives a full request/response cycle using the HTTP/1.1 protocol.</p>
+<p>No exception handling is done for:</p>
+<ul class="simple">
+<li><p>Malformed HTTP/1.1 responses</p></li>
+<li><p>Network communication errors</p></li>
+</ul>
+<p>The raw exceptions will be raised for any violation of HTTP/1.1
+protocol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – HTTP method string send in the request line.</p></li>
+<li><p><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Host string controlling both the DNS request and the
+host header.</p></li>
+<li><p><strong>uri</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Request-Uniform Resource Identifier (URI), usually
+the absolute path to the resource being requested.</p></li>
+<li><p><strong>payload</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><em>bytes</em></a>) – The encoded HTTP request body bytes to be sent.</p></li>
+<li><p><strong>headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – (optional) A dictionary of headers to be sent
+with the request. Default: {}</p></li>
+<li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – (optional) The TCP port used for the connection. Default: 443</p></li>
+<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – (optional) Timeout in seconds, used when retrieving a response.
+Default: 5 seconds.</p></li>
+<li><p><strong>ssl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/ssl.html#ssl.SSLContext" title="(in Python v3.9)"><em>ssl.SSLContext</em></a>) – (optional) Indicates if SSL is to be used in
+establishing the connection. Also accepts an SSLContext object.
+Default: True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pywreck.Response" title="pywreck.Response">Response</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="method-specific-apis">
+<h2>Method Specific APIs<a class="headerlink" href="#method-specific-apis" title="Permalink to this headline">¶</a></h2>
+<p>When using HTTP method functions directly, the method string does not have to be specified in the function call parameters.</p>
+<p>Supported methods:</p>
+<ul class="simple">
+<li><p>get</p></li>
+<li><p>head</p></li>
+<li><p>post</p></li>
+<li><p>put</p></li>
+<li><p>delete</p></li>
+<li><p>connect</p></li>
+<li><p>options</p></li>
+<li><p>trace</p></li>
+<li><p>patch</p></li>
+</ul>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2020, Allan Feldman.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
