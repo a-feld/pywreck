@@ -53,5 +53,11 @@ jobs:
       run: pip install -U pip wheel setuptools tox
     - name: Test
       run: tox -vv -p auto -- --cov --cov-report=xml
+      env:
+        TOX_SKIP_ENV: (lint)|(docs)
+    - name: Lint/Docs
+      run: tox -vv -p auto
+      env:
+        TOX_SKIP_ENV: py.*
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
