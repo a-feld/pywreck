@@ -52,7 +52,7 @@ jobs:
     - name: Install Dependencies
       run: pip install -U pip wheel setuptools tox
     - name: Test
-      run: tox -vv -p auto -- --cov --cov-report=xml
+      run: tox -vv -p auto -- --cov --cov-report=xml --cov-append
       env:
         TOX_SKIP_ENV: (lint)|(docs)
     - name: Lint/Docs
