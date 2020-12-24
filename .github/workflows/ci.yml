@@ -31,10 +31,6 @@ jobs:
       TOX_PARALLEL_NO_SPINNER: 1
       PY_COLORS: 0
 
-    strategy:
-      matrix:
-        python-version: ['3.7', '3.8', '3.9']
-
     runs-on: ubuntu-latest
 
     steps:
@@ -43,23 +39,19 @@ jobs:
         persist-credentials: false
     - uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.7
+        architecture: x64
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+        architecture: x64
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
         architecture: x64
     - name: Install Dependencies
       run: pip install -U pip wheel setuptools tox
     - name: Test
-      run: tox -vv -- --cov --cov-report=xml
-      env:
-        TOXENV: py
+      run: tox -vv -p auto -- --cov --cov-report=xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
-    - name: Lint
-      run: tox -vv
-      env:
-        TOXENV: lint
-      if: matrix.python-version == 3.9
-    - name: Docs
-      run: tox -vv
-      env:
-        TOXENV: docs
-      if: matrix.python-version == 3.9
