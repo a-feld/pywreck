@@ -27,7 +27,7 @@ except Exception:  # pragma: no cover
 
 
 class _HttpReader:
-    def __init__(self, reader, timeout):
+    def __init__(self, reader: asyncio.StreamReader, timeout: Optional[float]) -> None:
         self.reader = reader
         self.timeout = timeout
 
@@ -46,7 +46,7 @@ class _HttpReader:
 
 
 class _HttpWriter:
-    def __init__(self, writer, timeout):
+    def __init__(self, writer: asyncio.StreamWriter, timeout: Optional[float]) -> None:
         self.writer = writer
         self.timeout = timeout
         self.transport = writer.transport
@@ -198,6 +198,7 @@ async def request(
         try:
             await writer.wait_closed()
         except (OSError, asyncio.TimeoutError):
+            assert isinstance(writer.transport, asyncio.WriteTransport)
             writer.transport.abort()
 
 
