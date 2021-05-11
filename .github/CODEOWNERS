@@ -1,1 +1,7 @@
 *   @a-feld
+
+# Allow github actions to update dependencies
+/.github/workflows/          @github-actions[bot] @a-feld
+/tests/requirements-docs.txt @github-actions[bot] @a-feld
+/tests/requirements-lint.txt @github-actions[bot] @a-feld
+/tests/requirements-test.txt @github-actions[bot] @a-feld
