@@ -1,0 +1,25 @@
+name: Merge Dependabot Automatically
+
+on: pull_request_target
+
+jobs:
+  comment:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v4
+        with:
+          github-token: ${{secrets.PAT_GITHUB}}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '@dependabot merge'
+            })
+            github.pulls.createReview({
+              pull_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event: 'APPROVE'
+            })
