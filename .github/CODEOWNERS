@@ -1,1 +1,4 @@
 *   @a-feld
+
+# No code owners required for dependency updates
+tests/requirements-*.txt
