@@ -12,28 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Merge Dependabot Automatically
-
+name: auto-merge
 on: pull_request_target
-
 jobs:
-  comment:
+  dependabot:
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v4
-        with:
-          github-token: ${{secrets.PAT_GITHUB}}
-          script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '@dependabot merge'
-            })
-            github.pulls.createReview({
-              pull_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              event: 'APPROVE'
-            })
+      - name: auto-merge Dependabot PRs
+        run: |
+          gh pr merge --auto --rebase "$PR_URL"
+          gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
