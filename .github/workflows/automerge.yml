@@ -18,6 +18,9 @@ jobs:
   dependabot:
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
     steps:
       - name: auto-merge Dependabot PRs
         run: |
