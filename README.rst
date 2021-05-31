@@ -5,7 +5,7 @@ pywreck
 |ci| |coverage| |docs| |black|
 
 .. |ci| image:: https://img.shields.io/github/workflow/status/a-feld/pywreck/CI/main
-   :target: https://github.com/a-feld/pywreck/actions?query=workflow%3ACI
+   :target: https://github.com/a-feld/pywreck/actions/workflows/ci.yml
 
 .. |coverage| image:: https://img.shields.io/codecov/c/github/a-feld/pywreck/main
     :target: https://codecov.io/gh/a-feld/pywreck
