@@ -61,8 +61,7 @@ class _HttpWriter:
         return self.writer.close()
 
     async def wait_closed(self) -> None:
-        coro = self.writer.wait_closed()
-        return await asyncio.wait_for(coro, timeout=0.1)
+        return await self.writer.wait_closed()
 
 
 @dataclass
