@@ -68,6 +68,8 @@ async def handle_chunked(reader, writer):
         writer.write(chunk + b"\r\n")
         await writer.drain()
 
+    writer.close()
+
 
 async def handle_cookies(reader, writer):
     await read_request(reader)
@@ -75,6 +77,8 @@ async def handle_cookies(reader, writer):
     writer.write(b"set-cookie: foo=bar\r\n")
     writer.write(b"set-cookie: boo=baz\r\n")
     writer.write(b"\r\n")
+    await writer.drain()
+    writer.close()
 
 
 async def handle_close(reader, writer):
