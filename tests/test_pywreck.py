@@ -18,7 +18,8 @@ import socket
 import pytest
 
 import pywreck
-from handlers import (
+
+from .handlers import (
     handle_chunked,
     handle_close,
     handle_cookies,
