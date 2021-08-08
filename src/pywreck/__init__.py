@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import asyncio
-import functools
 import os.path
 import ssl
 from dataclasses import dataclass
@@ -202,12 +201,61 @@ async def request(
             writer.transport.abort()
 
 
-get = functools.partial(request, "GET")
-head = functools.partial(request, "HEAD")
-post = functools.partial(request, "POST")
-put = functools.partial(request, "PUT")
-delete = functools.partial(request, "DELETE")
-connect = functools.partial(request, "CONNECT")
-options = functools.partial(request, "OPTIONS")
-trace = functools.partial(request, "TRACE")
-patch = functools.partial(request, "PATCH")
+async def get(
+    host: str,
+    uri: str,
+    payload: bytes = b"",
+    headers: Optional[Dict[str, str]] = None,
+    port: int = 443,
+    timeout: Optional[float] = 5.0,
+    ssl: Union[bool, ssl.SSLContext] = True,
+) -> Response:
+    return await request("GET", host, uri, payload, headers, port, timeout, ssl)
+
+
+async def head(
+    host: str,
+    uri: str,
+    payload: bytes = b"",
+    headers: Optional[Dict[str, str]] = None,
+    port: int = 443,
+    timeout: Optional[float] = 5.0,
+    ssl: Union[bool, ssl.SSLContext] = True,
+) -> Response:
+    return await request("HEAD", host, uri, payload, headers, port, timeout, ssl)
+
+
+async def post(
+    host: str,
+    uri: str,
+    payload: bytes = b"",
+    headers: Optional[Dict[str, str]] = None,
+    port: int = 443,
+    timeout: Optional[float] = 5.0,
+    ssl: Union[bool, ssl.SSLContext] = True,
+) -> Response:
+    return await request("POST", host, uri, payload, headers, port, timeout, ssl)
+
+
+async def put(
+    host: str,
+    uri: str,
+    payload: bytes = b"",
+    headers: Optional[Dict[str, str]] = None,
+    port: int = 443,
+    timeout: Optional[float] = 5.0,
+    ssl: Union[bool, ssl.SSLContext] = True,
+) -> Response:
+    return await request("PUT", host, uri, payload, headers, port, timeout, ssl)
+
+
+async def delete(
+    host: str,
+    uri: str,
+    payload: bytes = b"",
+    headers: Optional[Dict[str, str]] = None,
+    port: int = 443,
+    timeout: Optional[float] = 5.0,
+    ssl: Union[bool, ssl.SSLContext] = True,
+) -> Response:
+    return await request("DELETE", host, uri, payload, headers, port, timeout, ssl)

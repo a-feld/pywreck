@@ -55,7 +55,7 @@ def port(handler):
 
 @pytest.mark.parametrize(
     "method",
-    ("get", "head", "post", "put", "delete", "connect", "options", "trace", "patch"),
+    ("get", "head", "post", "put", "delete"),
 )
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
 def test_basic(loop, port, method):
