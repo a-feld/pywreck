@@ -135,11 +135,7 @@ async def request(
             request_headers.update(headers)
 
         for header_name, header_value in request_headers.items():
-            writer.write_ascii(
-                "{header_name}:{header_value}\r\n".format(
-                    header_name=header_name, header_value=header_value
-                )
-            )
+            writer.write_ascii(f"{header_name}:{header_value}\r\n")
 
         # Finish request metadata section
         writer.write(b"\r\n")
