@@ -117,7 +117,7 @@ def test_payload(loop, port):
     ("", "get", "post", "put", "delete"),
 )
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
-def test_default_headers_and_payload(method, loop, port):
+def test_default_headers_and_payload(loop, port, method):
     if not method:
         method = "GET"
         f = functools.partial(pywreck.request, method)
