@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import asyncio
+import functools
 import socket
 
 import pytest
@@ -111,16 +112,27 @@ def test_payload(loop, port):
     assert response.data == expected_data
 
 
+@pytest.mark.parametrize(
+    "method",
+    ("", "get", "post", "put", "delete"),
+)
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
-def test_default_headers(loop, port):
-    response = loop.run_until_complete(
-        pywreck.get("localhost", "/", port=port, ssl=False)
-    )
+def test_default_headers_and_payload(method, loop, port):
+    if not method:
+        method = "GET"
+        f = functools.partial(pywreck.request, method)
+    else:
+        f = getattr(pywreck, method)
+
+    response = loop.run_until_complete(f("localhost", "/", port=port, ssl=False))
     assert response.status == 200
     data = response.data.split(b"\r\n")
     assert len(data) == 5
     assert data[-2:] == [b"", b""]
-    assert data[:2] == [b"GET / HTTP/1.1", b"host:localhost"]
+    assert data[:2] == [
+        f"{method.upper()} / HTTP/1.1".encode("latin1"),
+        b"host:localhost",
+    ]
     assert data[2].startswith(b"user-agent:pywreck/")
 
 
