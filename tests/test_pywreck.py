@@ -31,7 +31,9 @@ from .handlers import (
 
 @pytest.fixture(scope="session")
 def loop():
-    return asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    return loop
 
 
 @pytest.fixture
@@ -40,14 +42,13 @@ def handler(request):
 
 
 @pytest.fixture
-def port(handler):
+def port(loop, handler):
     # Get a random port
     s = socket.socket()
     s.bind(("", 0))
     _port = s.getsockname()[1]
     s.close()
 
-    loop = asyncio.get_event_loop()
     server = loop.run_until_complete(asyncio.start_server(handler, "127.0.0.1", _port))
     yield _port
     server.close()
