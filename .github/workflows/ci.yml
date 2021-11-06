@@ -46,7 +46,7 @@ jobs:
           architecture: x64
       - uses: actions/setup-python@v2.2.2
         with:
-          python-version: 3.9
+          python-version: '>=3.9.8 <3.10'
           architecture: x64
       - uses: actions/setup-python@v2.2.2
         with:
