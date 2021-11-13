@@ -51,8 +51,20 @@ def port(loop, handler):
 
     server = loop.run_until_complete(asyncio.start_server(handler, "127.0.0.1", _port))
     yield _port
-    server.close()
-    loop.run_until_complete(server.wait_closed())
+
+    async def shutdown():
+        server.close()
+        loop.create_task(server.wait_closed())
+
+        tasks = asyncio.all_tasks()
+        tasks.remove(shutdown_task)
+        await asyncio.wait_for(
+            asyncio.gather(*tasks),
+            timeout=0.1,
+        )
+
+    shutdown_task = loop.create_task(shutdown())
+    loop.run_until_complete(shutdown_task)
 
 
 @pytest.mark.parametrize(
