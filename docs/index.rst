@@ -29,3 +29,16 @@ Additionally, :py:meth:`pywreck.request` is provided for custom HTTP methods.
     :hidden:
 
     api
+
+Reusing Connections
+===================
+
+Creating TCP connections and negotiating TLS can sometimes be expensive. An API
+is provided to allow for multiple HTTP requests on the same connection.
+
+.. code-block:: python
+
+    async with await pywreck.Connection.create("www.example.com") as conn:
+        for _ in range(2):
+            response = await conn.request("HEAD", "/")
+            print(response)

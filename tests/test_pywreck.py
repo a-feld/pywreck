@@ -123,15 +123,14 @@ def test_multiple_requests_on_a_single_connection(loop, port):
             timeout=None,
         )
 
-        for _ in range(2):
-            response = await connection.request(
-                "GET",
-                "/",
-                headers={"user-agent": "pywreck test, yo!"},
-            )
-            validate_response(response)
-
-        await connection.close()
+        async with connection:
+            for _ in range(2):
+                response = await connection.request(
+                    "GET",
+                    "/",
+                    headers={"user-agent": "pywreck test, yo!"},
+                )
+                validate_response(response)
 
     loop.run_until_complete(_async())
 

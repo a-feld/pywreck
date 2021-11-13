@@ -16,7 +16,8 @@ import asyncio
 import os.path
 import ssl
 from dataclasses import dataclass
-from typing import Dict, Optional, Union
+from types import TracebackType
+from typing import Dict, Optional, Type, Union
 
 try:
     with open(os.path.join(os.path.dirname(__file__), "version.txt")) as f:
@@ -121,6 +122,9 @@ class Connection:
         reader, writer = await asyncio.open_connection(host, port, ssl=ssl)
         return Connection(reader, writer, host, timeout)
 
+    async def __aenter__(self) -> "Connection":
+        return self
+
     async def request(
         self,
         method: str,
@@ -218,6 +222,14 @@ class Connection:
             response_data = await reader.readexactly(content_length)
 
         return Response(status, response_headers, response_data)
+
+    async def __aexit__(
+        self,
+        exc: Optional[Type[BaseException]],
+        value: Optional[BaseException],
+        tb: Optional[TracebackType],
+    ) -> None:
+        await self.close()
 
     async def close(self) -> None:
         """Close the connection"""
