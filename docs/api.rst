@@ -3,8 +3,15 @@
 API Reference
 =============
 
-High Level API
---------------
+Response
+--------
+
+Holds an HTTP response
+
+.. autoclass:: pywreck.Response
+
+Request API
+-----------
 
 Use these APIs to open a connection, make a request, and close the connection.
 
