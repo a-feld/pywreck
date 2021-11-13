@@ -22,6 +22,13 @@ A small, not so great async Python HTTP client.
 
 This HTTP client does not implement any error / exception handling. If the server the client is talking to deviates from the HTTP spec, this code will behave in unexpected ways. Network errors? Those are unhandled too!
 
+Install
+-------
+
+.. code-block:: sh
+
+   pip install pywreck
+
 Usage
 -----
 

@@ -6,6 +6,16 @@ A compact HTTP/1.1 client that's "good enough" for many cases. The code has no d
 Quickstart
 ==========
 
+Install
+-------
+
+.. code-block:: sh
+
+   pip install pywreck
+
+Usage
+-----
+
 Lowercased HTTP methods are available for use directly on the :py:mod:`pywreck` module.
 Additionally, :py:meth:`pywreck.request` is provided for custom HTTP methods.
 
