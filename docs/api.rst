@@ -6,14 +6,10 @@ API Reference
 Response
 --------
 
-Holds an HTTP response
-
 .. autoclass:: pywreck.Response
 
 Request API
 -----------
-
-Use these APIs to open a connection, make a request, and close the connection.
 
 .. autofunction:: pywreck.request
 
