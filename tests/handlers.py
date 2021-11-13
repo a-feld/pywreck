@@ -18,9 +18,12 @@ import asyncio
 async def read_request(reader):
     request = []
     content_length = 0
+
     while True:
-        coro = reader.readline()
-        line = await asyncio.wait_for(coro, timeout=0.1)
+        line = await asyncio.wait_for(
+            reader.readline(),
+            timeout=0.1,
+        )
         request.append(line)
         if not line.rstrip():
             break
@@ -28,20 +31,27 @@ async def read_request(reader):
         if line.lower().startswith(b"content-length"):
             content_length = int(line[15:])
 
-    coro = reader.readexactly(content_length)
-    data = await asyncio.wait_for(coro, timeout=0.1)
+    data = await asyncio.wait_for(
+        reader.readexactly(content_length),
+        timeout=0.1,
+    )
     request.append(data)
-    request = b"".join(request)
-    return request
+
+    return b"".join(request)
 
 
 async def handle_echo(reader, writer):
-    output = await read_request(reader)
-    writer.write(b"HTTP/1.1 200 OK\r\n")
-    writer.write(f"content-length: {len(output)}\r\n\r\n".encode("latin1"))
-    writer.write(output)
-    await writer.drain()
+    while True:
+        output = await read_request(reader)
+        if not output:
+            break
+        writer.write(b"HTTP/1.1 200 OK\r\n")
+        writer.write(f"content-length: {len(output)}\r\n\r\n".encode("latin1"))
+        writer.write(output)
+        await writer.drain()
+
     writer.close()
+    await writer.wait_closed()
 
 
 async def handle_multi_response_headers(reader, writer):
