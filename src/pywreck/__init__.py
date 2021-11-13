@@ -73,61 +73,92 @@ class Response:
     data: bytes
 
 
-async def request(
-    method: str,
-    host: str,
-    uri: str,
-    payload: bytes = b"",
-    headers: Optional[Dict[str, str]] = None,
-    port: int = 443,
-    timeout: Optional[float] = 5.0,
-    ssl: Union[bool, ssl.SSLContext] = True,
-) -> Response:
-    """Make a full HTTP request
+class Connection:
+    """Streaming connection wrapper
 
-    Drives a full request/response cycle using the HTTP/1.1 protocol.
+    Provides an interface to make HTTP requests via a streaming connection.
 
-    No exception handling is done for:
-
-    * Malformed HTTP/1.1 responses
-    * Network communication errors
-
-    The raw exceptions will be raised for any violation of HTTP/1.1
-    protocol.
-
-    :param method: HTTP method string send in the request line.
-    :type method: str
-    :param host: Host string controlling both the DNS request and the
-        host header.
-    :type host: str
-    :param uri: Request-Uniform Resource Identifier (URI), usually
-        the absolute path to the resource being requested.
-    :type uri: str
-    :param payload: The encoded HTTP request body bytes to be sent.
-    :type payload: bytes
-    :param headers: (optional) A dictionary of headers to be sent
-        with the request. Default: {}
-    :type headers: dict
-    :param port: (optional) The TCP port used for the connection. Default: 443
-    :type port: int
-    :param timeout: (optional) Timeout in seconds, used when retrieving a response.
-        Default: 5 seconds.
-    :type timeout: float
-    :param ssl: (optional) Indicates if SSL is to be used in
-        establishing the connection. Also accepts an SSLContext object.
-        Default: True
-    :type ssl: bool or ssl.SSLContext
-
-    :rtype: Response
+    It is not recommended to instantiate :class:`Connection` objects directly;
+    use :meth:`Connection.create()` instead.
     """
-    _reader, _writer = await asyncio.open_connection(host, port, ssl=ssl)
-    reader, writer = _HttpReader(_reader, timeout), _HttpWriter(_writer, timeout)
 
-    try:
+    def __init__(
+        self,
+        reader: asyncio.StreamReader,
+        writer: asyncio.StreamWriter,
+        host: str,
+        timeout: Optional[float],
+    ):
+        self._reader = _HttpReader(reader, timeout)
+        self._writer = _HttpWriter(writer, timeout)
+        self._host = host
+
+    @classmethod
+    async def create(
+        cls,
+        host: str,
+        port: int = 443,
+        ssl: Union[bool, ssl.SSLContext] = True,
+        timeout: Optional[float] = 5.0,
+    ) -> "Connection":
+        """Create a Connection
+
+        :param host: Host string controlling both the DNS request and the
+            host header.
+        :type host: str
+        :param port: (optional) The TCP port used for the connection. Default: 443
+        :type port: int
+        :param ssl: (optional) Indicates if SSL is to be used in
+            establishing the connection. Also accepts an SSLContext object.
+            Default: True
+        :type ssl: bool or ssl.SSLContext
+        :param timeout: (optional) Timeout in seconds, used when retrieving a response.
+            Default: 5 seconds.
+        :type timeout: float
+
+        :rtype: Connection
+        """
+        reader, writer = await asyncio.open_connection(host, port, ssl=ssl)
+        return Connection(reader, writer, host, timeout)
+
+    async def request(
+        self,
+        method: str,
+        uri: str,
+        payload: bytes = b"",
+        headers: Optional[Dict[str, str]] = None,
+    ) -> Response:
+        """Make an HTTP request
+
+        Drives a full request/response cycle using the HTTP/1.1 protocol.
+
+        No exception handling is done for:
+
+        * Malformed HTTP/1.1 responses
+        * Network communication errors
+
+        The raw exceptions will be raised for any violation of HTTP/1.1
+        protocol.
+
+        :param method: HTTP method string send in the request line.
+        :type method: str
+        :param uri: Request-Uniform Resource Identifier (URI), usually
+            the absolute path to the resource being requested.
+        :type uri: str
+        :param payload: (optional) The encoded HTTP request body bytes to be
+            sent. Default: b""
+        :type payload: bytes
+        :param headers: (optional) A dictionary of headers to be sent
+            with the request. Default: {}
+        :type headers: dict
+
+        :rtype: Response
+        """
+        reader, writer = self._reader, self._writer
         request = f"{method} {uri} HTTP/1.1\r\n"
         writer.write_ascii(request)
 
-        request_headers = {"host": host, "user-agent": f"pywreck/{__version__}"}
+        request_headers = {"host": self._host, "user-agent": f"pywreck/{__version__}"}
         if payload:
             request_headers["content-length"] = str(len(payload))
 
@@ -188,13 +219,74 @@ async def request(
 
         return Response(status, response_headers, response_data)
 
-    finally:
+    async def close(self) -> None:
+        """Close the connection"""
+        writer = self._writer
         writer.close()
         try:
             await writer.wait_closed()
         except (OSError, asyncio.TimeoutError):
             assert isinstance(writer.transport, asyncio.WriteTransport)
             writer.transport.abort()
+
+
+async def request(
+    method: str,
+    host: str,
+    uri: str,
+    payload: bytes = b"",
+    headers: Optional[Dict[str, str]] = None,
+    port: int = 443,
+    timeout: Optional[float] = 5.0,
+    ssl: Union[bool, ssl.SSLContext] = True,
+) -> Response:
+    """Make a full HTTP request
+
+    Drives a full request/response cycle using the HTTP/1.1 protocol.
+
+    No exception handling is done for:
+
+    * Malformed HTTP/1.1 responses
+    * Network communication errors
+
+    The raw exceptions will be raised for any violation of HTTP/1.1
+    protocol.
+
+    :param method: HTTP method string send in the request line.
+    :type method: str
+    :param host: Host string controlling both the DNS request and the
+        host header.
+    :type host: str
+    :param uri: Request-Uniform Resource Identifier (URI), usually
+        the absolute path to the resource being requested.
+    :type uri: str
+    :param payload: The encoded HTTP request body bytes to be sent.
+    :type payload: bytes
+    :param headers: (optional) A dictionary of headers to be sent
+        with the request. Default: {}
+    :type headers: dict
+    :param port: (optional) The TCP port used for the connection. Default: 443
+    :type port: int
+    :param timeout: (optional) Timeout in seconds, used when retrieving a response.
+        Default: 5 seconds.
+    :type timeout: float
+    :param ssl: (optional) Indicates if SSL is to be used in
+        establishing the connection. Also accepts an SSLContext object.
+        Default: True
+    :type ssl: bool or ssl.SSLContext
+
+    :rtype: Response
+    """
+    connection = await Connection.create(host, port, ssl=ssl, timeout=timeout)
+    try:
+        return await connection.request(
+            method=method,
+            uri=uri,
+            payload=payload,
+            headers=headers,
+        )
+    finally:
+        await connection.close()
 
 
 async def get(

@@ -59,6 +59,10 @@ html_theme_options = {
 html_show_sphinx = False
 
 # -- Extension configuration -------------------------------------------------
+autodoc_default_options = {
+    "members": True,
+    "member-order": "bysource",
+}
 
 # -- Options for intersphinx extension ---------------------------------------
 

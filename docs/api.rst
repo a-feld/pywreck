@@ -3,14 +3,15 @@
 API Reference
 =============
 
-Generic API
------------
+High Level API
+--------------
 
-.. automodule:: pywreck
-    :members: Response, request
+Use these APIs to open a connection, make a request, and close the connection.
 
-Method Specific APIs
---------------------
+.. autofunction:: pywreck.request
+
+HTTP Method APIs
+++++++++++++++++
 
 When using HTTP method functions directly, the method string does not have to be specified in the function call parameters.
 
@@ -21,3 +22,8 @@ Supported methods:
 * post
 * put
 * delete
+
+Connection API
+--------------
+
+.. autoclass:: pywreck.Connection
