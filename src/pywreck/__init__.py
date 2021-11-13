@@ -65,7 +65,7 @@ class _HttpWriter:
         return await asyncio.wait_for(coro, timeout=self.timeout)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Response:
     """HTTP Response Container"""
 
