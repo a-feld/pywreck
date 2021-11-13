@@ -101,6 +101,42 @@ def test_basic(loop, port, method):
 
 
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
+def test_multiple_requests_on_a_single_connection(loop, port):
+    def validate_response(response):
+        assert response.status == 200
+        data = response.data
+        expected_data = (
+            "GET / HTTP/1.1\r\n"
+            "host:localhost\r\n"
+            "user-agent:pywreck test, yo!\r\n"
+            "\r\n"
+        ).encode("utf-8")
+
+        assert response.headers == {"content-length": str(len(expected_data))}
+        assert data == expected_data
+
+    async def _async():
+        connection = await pywreck.Connection.create(
+            "localhost",
+            port=port,
+            ssl=False,
+            timeout=None,
+        )
+
+        for _ in range(2):
+            response = await connection.request(
+                "GET",
+                "/",
+                headers={"user-agent": "pywreck test, yo!"},
+            )
+            validate_response(response)
+
+        await connection.close()
+
+    loop.run_until_complete(_async())
+
+
+@pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
 def test_payload(loop, port):
     response = loop.run_until_complete(
         pywreck.post(
