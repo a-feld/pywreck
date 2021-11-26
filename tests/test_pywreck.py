@@ -205,12 +205,27 @@ def test_cookies(loop, port):
 
 @pytest.mark.parametrize("handler", (handle_chunked,), indirect=True)
 def test_chunked(loop, port):
-    response = loop.run_until_complete(
-        pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
-    )
-    assert response.status == 200
-    assert response.headers == {"transfer-encoding": "chunked"}
-    assert response.data == (b"*" * 16 + b"foo")
+    async def _async():
+        connection = await pywreck.Connection.create(
+            "localhost",
+            port=port,
+            ssl=False,
+            timeout=None,
+        )
+
+        async with connection:
+            for _ in range(2):
+                response = await connection.request(
+                    "GET",
+                    "/",
+                    headers={"user-agent": "pywreck test, yo!"},
+                )
+
+                assert response.status == 200
+                assert response.headers == {"transfer-encoding": "chunked"}
+                assert response.data == (b"*" * 16 + b"foo")
+
+    loop.run_until_complete(_async())
 
 
 @pytest.mark.parametrize("handler", (handle_close,), indirect=True)

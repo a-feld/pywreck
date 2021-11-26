@@ -220,9 +220,9 @@ class Connection:
                 while True:
                     chunk_len_bytes = await reader.readuntil(b"\r\n")
                     content_length = int(chunk_len_bytes.rstrip(), 16)
+                    part = await reader.readexactly(content_length + 2)
                     if not content_length:
                         break
-                    part = await reader.readexactly(content_length + 2)
                     response_chunks.append(part[:-2])
 
                 response_data = b"".join(response_chunks)

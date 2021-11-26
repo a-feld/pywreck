@@ -65,20 +65,25 @@ async def handle_multi_response_headers(reader, writer):
 
 
 async def handle_chunked(reader, writer):
-    await read_request(reader)
-    writer.write(b"HTTP/1.1 200 OK\r\n")
-    writer.write(b"transfer-encoding: chunked\r\n")
-    writer.write(b"\r\n")
-    await writer.drain()
+    while True:
+        output = await read_request(reader)
+        if not output:
+            break
 
-    chunks = [b"*" * 16, b"foo", b""]
-    for chunk in chunks:
-        hex_len = b"%x\r\n" % len(chunk)
-        writer.write(hex_len)
-        writer.write(chunk + b"\r\n")
+        writer.write(b"HTTP/1.1 200 OK\r\n")
+        writer.write(b"transfer-encoding: chunked\r\n")
+        writer.write(b"\r\n")
         await writer.drain()
 
+        chunks = [b"*" * 16, b"foo", b""]
+        for chunk in chunks:
+            hex_len = b"%x\r\n" % len(chunk)
+            writer.write(hex_len)
+            writer.write(chunk + b"\r\n")
+            await writer.drain()
+
     writer.close()
+    await writer.wait_closed()
 
 
 async def handle_cookies(reader, writer):
