@@ -28,7 +28,7 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - uses: actions/setup-python@v2.3.0
+      - uses: actions/setup-python@v2.3.1
         with:
           python-version: "3.x"
           architecture: x64
@@ -50,7 +50,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v2.4.0
-      - uses: actions/setup-python@v2.3.0
+      - uses: actions/setup-python@v2.3.1
         with:
           python-version: "3.x"
           architecture: x64
