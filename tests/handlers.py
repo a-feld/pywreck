@@ -96,5 +96,9 @@ async def handle_cookies(reader, writer):
     writer.close()
 
 
-async def handle_close(reader, writer):
+async def handle_rst(reader, writer):
     writer.transport.abort()
+
+
+async def handle_fin(reader, writer):
+    writer.transport.write_eof()

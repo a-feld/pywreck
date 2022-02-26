@@ -22,10 +22,11 @@ import pywreck
 
 from .handlers import (
     handle_chunked,
-    handle_close,
     handle_cookies,
     handle_echo,
+    handle_fin,
     handle_multi_response_headers,
+    handle_rst,
 )
 
 
@@ -228,9 +229,20 @@ def test_chunked(loop, port):
     loop.run_until_complete(_async())
 
 
-@pytest.mark.parametrize("handler", (handle_close,), indirect=True)
-def test_protocol_error(loop, port):
+@pytest.mark.parametrize("handler", (handle_rst,), indirect=True)
+def test_transport_rst(loop, port):
+    """A server may hard-close a connection with a RST"""
     with pytest.raises(ConnectionResetError):
+        loop.run_until_complete(
+            pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
+        )
+
+
+@pytest.mark.parametrize("handler", (handle_fin,), indirect=True)
+def test_transport_fin(loop, port):
+    """A server will sometimes close a connection gracefully with a FIN before
+    a response is started"""
+    with pytest.raises(IndexError):
         loop.run_until_complete(
             pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
         )
