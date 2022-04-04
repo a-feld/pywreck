@@ -117,7 +117,6 @@ def test_multiple_requests_on_a_single_connection(loop, port):
             "localhost",
             port=port,
             ssl=False,
-            timeout=None,
         )
 
         async with connection:
@@ -126,6 +125,7 @@ def test_multiple_requests_on_a_single_connection(loop, port):
                     "GET",
                     "/",
                     headers={"user-agent": "pywreck test, yo!"},
+                    timeout=None,
                 )
                 validate_response(response)
 
@@ -207,7 +207,6 @@ def test_chunked(loop, port):
             "localhost",
             port=port,
             ssl=False,
-            timeout=None,
         )
 
         async with connection:
@@ -216,6 +215,7 @@ def test_chunked(loop, port):
                     "GET",
                     "/",
                     headers={"user-agent": "pywreck test, yo!"},
+                    timeout=None,
                 )
 
                 assert response.status == 200

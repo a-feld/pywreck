@@ -17,52 +17,13 @@ import os.path
 import ssl
 from dataclasses import dataclass
 from types import TracebackType
-from typing import Dict, Optional, Type, Union
+from typing import Dict, Optional, Type, Union, cast
 
 try:
     with open(os.path.join(os.path.dirname(__file__), "version.txt")) as f:
         __version__ = f.read()
 except Exception:  # pragma: no cover
     __version__ = "0.0.0"  # pragma: no cover
-
-
-class _HttpReader:
-    def __init__(self, reader: asyncio.StreamReader, timeout: Optional[float]) -> None:
-        self.reader = reader
-        self.timeout = timeout
-
-    async def readline(self) -> str:
-        coro = self.reader.readline()
-        result = await asyncio.wait_for(coro, timeout=self.timeout)
-        return result.decode("latin1")
-
-    async def readexactly(self, n: int) -> bytes:
-        coro = self.reader.readexactly(n)
-        return await asyncio.wait_for(coro, timeout=self.timeout)
-
-    async def readuntil(self, separator: bytes) -> bytes:
-        coro = self.reader.readuntil(separator)
-        return await asyncio.wait_for(coro, timeout=self.timeout)
-
-
-class _HttpWriter:
-    def __init__(self, writer: asyncio.StreamWriter, timeout: Optional[float]) -> None:
-        self.writer = writer
-        self.timeout = timeout
-        self.transport = writer.transport
-
-    def write(self, data: bytes) -> None:
-        return self.writer.write(data)
-
-    def write_ascii(self, data: str) -> None:
-        return self.writer.write(data.encode("latin1"))
-
-    def close(self) -> None:
-        return self.writer.close()
-
-    async def wait_closed(self) -> None:
-        coro = self.writer.wait_closed()
-        return await asyncio.wait_for(coro, timeout=self.timeout)
 
 
 @dataclass(frozen=True)
@@ -89,12 +50,20 @@ class Connection:
         writer: asyncio.StreamWriter,
         lock: asyncio.Lock,
         host: str,
-        timeout: Optional[float],
+        close_timeout: Optional[float],
     ):
-        self._reader = _HttpReader(reader, timeout)
-        self._writer = _HttpWriter(writer, timeout)
+        self._reader = reader
+        self._writer = writer
         self._lock = lock
         self._host = host
+        self._close_timeout = close_timeout
+
+    async def _readline_ascii(self) -> str:
+        result = await self._reader.readline()
+        return result.decode("latin1")
+
+    def _write_ascii(self, data: str) -> None:
+        return self._writer.write(data.encode("latin1"))
 
     @classmethod
     async def create(
@@ -102,27 +71,29 @@ class Connection:
         host: str,
         port: int = 443,
         ssl: Union[bool, ssl.SSLContext] = True,
-        timeout: Optional[float] = 5.0,
+        close_timeout: Optional[float] = 5.0,
     ) -> "Connection":
         """Create a Connection
 
         :param host: Host string controlling both the DNS request and the
             host header.
         :type host: str
-        :param port: (optional) The TCP port used for the connection. Default: 443
+        :param port: (optional) The TCP port used for the connection.
+            Default: 443
         :type port: int
         :param ssl: (optional) Indicates if SSL is to be used in
             establishing the connection. Also accepts an SSLContext object.
             Default: True
         :type ssl: bool or ssl.SSLContext
-        :param timeout: (optional) Timeout in seconds, used when retrieving a response.
-            Default: 5 seconds.
-        :type timeout: float
+        :param close_timeout: (optional) The amount of time to wait in seconds
+            for the connection to close before forcing the connection to close
+            via TCP RST. Default: 5 seconds
+        :type close_timeout: float
 
         :rtype: Connection
         """
         reader, writer = await asyncio.open_connection(host, port, ssl=ssl)
-        return Connection(reader, writer, asyncio.Lock(), host, timeout)
+        return Connection(reader, writer, asyncio.Lock(), host, close_timeout)
 
     async def __aenter__(self) -> "Connection":
         return self
@@ -133,6 +104,7 @@ class Connection:
         uri: str,
         payload: bytes = b"",
         headers: Optional[Dict[str, str]] = None,
+        timeout: Optional[float] = 5.0,
     ) -> Response:
         """Make an HTTP request
 
@@ -157,15 +129,30 @@ class Connection:
         :param headers: (optional) A dictionary of headers to be sent
             with the request. Default: {}
         :type headers: dict
+        :param timeout: (optional) Timeout in seconds for the request.
+            Default: 5 seconds.
+        :type timeout: float
 
         :rtype: Response
         """
+        coro = self._request(method, uri, payload, headers)
+        if timeout is not None:
+            return await asyncio.wait_for(coro, timeout=timeout)
+        return await coro
+
+    async def _request(
+        self,
+        method: str,
+        uri: str,
+        payload: bytes = b"",
+        headers: Optional[Dict[str, str]] = None,
+    ) -> Response:
         # Since the connection can be a shared resource, we must ensure
         # exclusive access for the duration of the request/response cycle
         async with self._lock:
             reader, writer = self._reader, self._writer
             request = f"{method} {uri} HTTP/1.1\r\n"
-            writer.write_ascii(request)
+            self._write_ascii(request)
 
             request_headers = {
                 "host": self._host,
@@ -178,7 +165,7 @@ class Connection:
                 request_headers.update(headers)
 
             for header_name, header_value in request_headers.items():
-                writer.write_ascii(f"{header_name}:{header_value}\r\n")
+                self._write_ascii(f"{header_name}:{header_value}\r\n")
 
             # Finish request metadata section
             writer.write(b"\r\n")
@@ -186,7 +173,7 @@ class Connection:
             # Send payload
             writer.write(payload)
 
-            response_line = await reader.readline()
+            response_line = await self._readline_ascii()
             status = int(response_line.split(" ", 2)[1])
 
             response_headers: Dict[str, str] = {}
@@ -194,7 +181,7 @@ class Connection:
             chunked = False
 
             while True:
-                header_line = await reader.readline()
+                header_line = await self._readline_ascii()
                 header_line = header_line.rstrip()
                 if not header_line:
                     break
@@ -241,13 +228,19 @@ class Connection:
 
     async def close(self) -> None:
         """Close the connection"""
+        coro = self._close()
+        timeout = self._close_timeout
+        if timeout is not None:
+            return await asyncio.wait_for(coro, timeout=timeout)
+        return await coro
+
+    async def _close(self) -> None:
         writer = self._writer
         writer.close()
         try:
             await writer.wait_closed()
-        except (OSError, asyncio.TimeoutError):
-            assert isinstance(writer.transport, asyncio.WriteTransport)
-            writer.transport.abort()
+        finally:
+            cast(asyncio.WriteTransport, writer.transport).abort()
 
 
 async def request(
@@ -287,7 +280,7 @@ async def request(
     :type headers: dict
     :param port: (optional) The TCP port used for the connection. Default: 443
     :type port: int
-    :param timeout: (optional) Timeout in seconds, used when retrieving a response.
+    :param timeout: (optional) Timeout in seconds for the request.
         Default: 5 seconds.
     :type timeout: float
     :param ssl: (optional) Indicates if SSL is to be used in
@@ -297,16 +290,26 @@ async def request(
 
     :rtype: Response
     """
-    connection = await Connection.create(host, port, ssl=ssl, timeout=timeout)
-    try:
-        return await connection.request(
-            method=method,
-            uri=uri,
-            payload=payload,
-            headers=headers,
-        )
-    finally:
-        await connection.close()
+
+    async def _request() -> Response:
+        async with await Connection.create(
+            host,
+            port,
+            ssl=ssl,
+            close_timeout=None,
+        ) as connection:
+            return await connection.request(
+                method,
+                uri,
+                payload,
+                headers,
+                None,
+            )
+
+    coro = _request()
+    if timeout is not None:
+        return await asyncio.wait_for(coro, timeout=timeout)
+    return await coro
 
 
 async def get(
