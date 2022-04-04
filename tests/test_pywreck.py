@@ -125,7 +125,6 @@ def test_multiple_requests_on_a_single_connection(loop, port):
                     "GET",
                     "/",
                     headers={"user-agent": "pywreck test, yo!"},
-                    timeout=None,
                 )
                 validate_response(response)
 
@@ -165,7 +164,7 @@ def test_payload(loop, port):
 def test_default_headers_and_payload(loop, port, method):
     if not method:
         method = "GET"
-        f = functools.partial(pywreck.request, method)
+        f = functools.partial(pywreck.request, method, timeout=None)
     else:
         f = getattr(pywreck, method)
 
