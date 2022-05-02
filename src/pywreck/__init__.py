@@ -17,7 +17,7 @@ import os.path
 import ssl
 from dataclasses import dataclass
 from types import TracebackType
-from typing import Dict, Optional, Type, Union, cast
+from typing import Dict, Optional, Type, Union
 
 try:
     with open(os.path.join(os.path.dirname(__file__), "version.txt")) as f:
@@ -240,7 +240,7 @@ class Connection:
         try:
             await writer.wait_closed()
         finally:
-            cast(asyncio.WriteTransport, writer.transport).abort()
+            writer.transport.abort()
 
 
 async def request(
