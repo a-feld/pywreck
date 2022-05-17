@@ -17,7 +17,7 @@ import os.path
 import ssl
 from dataclasses import dataclass
 from types import TracebackType
-from typing import Dict, Optional, Type, Union
+from typing import Dict, Mapping, Optional, Type, Union
 
 try:
     with open(os.path.join(os.path.dirname(__file__), "version.txt")) as f:
@@ -103,7 +103,7 @@ class Connection:
         method: str,
         uri: str,
         payload: bytes = b"",
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[Mapping[str, str]] = None,
         timeout: Optional[float] = 5.0,
     ) -> Response:
         """Make an HTTP request
@@ -145,7 +145,7 @@ class Connection:
         method: str,
         uri: str,
         payload: bytes = b"",
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[Mapping[str, str]] = None,
     ) -> Response:
         # Since the connection can be a shared resource, we must ensure
         # exclusive access for the duration of the request/response cycle
@@ -248,7 +248,7 @@ async def request(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Dict[str, str]] = None,
+    headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
     ssl: Union[bool, ssl.SSLContext] = True,
@@ -316,7 +316,7 @@ async def get(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Dict[str, str]] = None,
+    headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
     ssl: Union[bool, ssl.SSLContext] = True,
@@ -328,7 +328,7 @@ async def head(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Dict[str, str]] = None,
+    headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
     ssl: Union[bool, ssl.SSLContext] = True,
@@ -340,7 +340,7 @@ async def post(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Dict[str, str]] = None,
+    headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
     ssl: Union[bool, ssl.SSLContext] = True,
@@ -352,7 +352,7 @@ async def put(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Dict[str, str]] = None,
+    headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
     ssl: Union[bool, ssl.SSLContext] = True,
@@ -364,7 +364,7 @@ async def delete(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Dict[str, str]] = None,
+    headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
     ssl: Union[bool, ssl.SSLContext] = True,
