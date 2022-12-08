@@ -27,7 +27,6 @@ on:
 jobs:
   test:
     env:
-      TOX_PARALLEL_NO_SPINNER: 1
       PY_COLORS: 0
 
     runs-on: ubuntu-latest
@@ -66,6 +65,6 @@ jobs:
       - name: Install Dependencies
         run: pip install -U pip wheel setuptools tox
       - name: Test
-        run: tox -vv -p auto
+        run: tox run-parallel --parallel auto --parallel-live --parallel-no-spinner --colored no
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
