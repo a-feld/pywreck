@@ -62,6 +62,7 @@ async def handle_multi_response_headers(reader, writer):
     writer.write(b"\r\n")
     await writer.drain()
     writer.close()
+    await writer.wait_closed()
 
 
 async def handle_chunked(reader, writer):
@@ -94,6 +95,7 @@ async def handle_cookies(reader, writer):
     writer.write(b"\r\n")
     await writer.drain()
     writer.close()
+    await writer.wait_closed()
 
 
 async def handle_rst(reader, writer):
