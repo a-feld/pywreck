@@ -101,4 +101,12 @@ async def handle_rst(reader, writer):
 
 
 async def handle_fin(reader, writer):
+    # EOF triggers TCP FIN
     writer.transport.write_eof()
+
+    # Force a context switch
+    await asyncio.sleep(0)
+
+    # Close the socket
+    writer.close()
+    await writer.wait_closed()
