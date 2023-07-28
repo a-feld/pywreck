@@ -21,6 +21,7 @@ import pytest
 import pywreck
 
 from .handlers import (
+    SHUTDOWN_EVENTS,
     handle_chunked,
     handle_cookies,
     handle_echo,
@@ -52,6 +53,8 @@ def port(loop, handler):
 
     server = loop.run_until_complete(asyncio.start_server(handler, "127.0.0.1", _port))
     yield _port
+    while SHUTDOWN_EVENTS:
+        SHUTDOWN_EVENTS.pop().set()
     server.close()
     loop.create_task(server.wait_closed())
 

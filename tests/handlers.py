@@ -14,6 +14,8 @@
 
 import asyncio
 
+SHUTDOWN_EVENTS = []
+
 
 async def read_request(reader):
     request = []
@@ -107,7 +109,9 @@ async def handle_fin(reader, writer):
     writer.transport.write_eof()
 
     # Force a context switch
-    await asyncio.sleep(0)
+    shutdown_event = asyncio.Event()
+    SHUTDOWN_EVENTS.append(shutdown_event)
+    await shutdown_event.wait()
 
     # Close the socket
     writer.close()
