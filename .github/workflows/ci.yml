@@ -51,6 +51,10 @@ jobs:
         with:
           python-version: 3.11.x
           architecture: x64
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.12.x
+          architecture: x64
       - name: pip-cache
         uses: actions/cache@v3
         with:
