@@ -43,7 +43,7 @@ jobs:
         run: python setup.py sdist bdist_wheel
       - name: Mint PyPI Token
         id: mint-pypi-token
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           result-encoding: string
           script: |
