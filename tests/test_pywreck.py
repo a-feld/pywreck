@@ -91,7 +91,7 @@ def test_basic(loop, port, method):
         "host:localhost\r\n"
         "user-agent:pywreck test, yo!\r\n"
         "\r\n"
-    ).encode("utf-8")
+    ).encode()
 
     assert response.headers == {"content-length": str(len(expected_data))}
     if method == "head":
@@ -106,11 +106,11 @@ def test_multiple_requests_on_a_single_connection(loop, port):
         assert response.status == 200
         data = response.data
         expected_data = (
-            "GET / HTTP/1.1\r\n"
-            "host:localhost\r\n"
-            "user-agent:pywreck test, yo!\r\n"
-            "\r\n"
-        ).encode("utf-8")
+            b"GET / HTTP/1.1\r\n"
+            b"host:localhost\r\n"
+            b"user-agent:pywreck test, yo!\r\n"
+            b"\r\n"
+        )
 
         assert response.headers == {"content-length": str(len(expected_data))}
         assert data == expected_data

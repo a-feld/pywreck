@@ -100,11 +100,11 @@ async def handle_cookies(reader, writer):
     await writer.wait_closed()
 
 
-async def handle_rst(reader, writer):
+async def handle_rst(_reader, writer):
     writer.transport.abort()
 
 
-async def handle_fin(reader, writer):
+async def handle_fin(_reader, writer):
     # EOF triggers TCP FIN
     writer.transport.write_eof()
 
