@@ -67,4 +67,4 @@ jobs:
       - name: Test
         run: tox run-parallel --parallel auto --parallel-live --parallel-no-spinner --colored no
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
