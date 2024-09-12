@@ -26,6 +26,8 @@ on:
 
 jobs:
   test:
+    permissions:
+      id-token: write
     env:
       PY_COLORS: 0
 
@@ -41,7 +43,7 @@ jobs:
           architecture: x64
       - uses: actions/setup-python@v5
         with:
-          python-version: '>=3.9.8 <3.10'
+          python-version: ">=3.9.8 <3.10"
           architecture: x64
       - uses: actions/setup-python@v5
         with:
@@ -68,3 +70,5 @@ jobs:
         run: tox run-parallel --parallel auto --parallel-live --parallel-no-spinner --colored no
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
+        with:
+          use_oidc: true
