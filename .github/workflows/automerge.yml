@@ -13,10 +13,10 @@
 # limitations under the License.
 
 name: auto-merge
-on: pull_request_target
+on: pull_request
 jobs:
   dependabot:
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'a-feld/pywreck'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
