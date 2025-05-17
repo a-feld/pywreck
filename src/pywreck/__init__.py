@@ -203,7 +203,7 @@ class Connection:
                 chunked = response_headers.get("transfer-encoding", "") == "chunked"
 
             if chunked:
-                response_chunks = []
+                response_chunks: list[bytes] = []
                 while True:
                     chunk_len_bytes = await reader.readuntil(b"\r\n")
                     content_length = int(chunk_len_bytes.rstrip(), 16)
