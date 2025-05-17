@@ -17,7 +17,7 @@ import os.path
 import ssl
 from dataclasses import dataclass
 from types import TracebackType
-from typing import Dict, Mapping, Optional, Type, Union
+from typing import Mapping, Optional, Type, Union
 
 try:
     with open(os.path.join(os.path.dirname(__file__), "version.txt")) as f:
@@ -31,7 +31,7 @@ class Response:
     """HTTP Response Container"""
 
     status: int
-    headers: Dict[str, str]
+    headers: dict[str, str]
     data: bytes
 
 
@@ -176,7 +176,7 @@ class Connection:
             response_line = await self._readline_ascii()
             status = int(response_line.split(" ", 2)[1])
 
-            response_headers: Dict[str, str] = {}
+            response_headers: dict[str, str] = {}
             content_length = 0
             chunked = False
 
