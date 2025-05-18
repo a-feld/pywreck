@@ -236,7 +236,7 @@ class Connection:
             coro = asyncio.wait_for(coro, timeout=timeout)
         try:
             await coro
-        except TimeoutError:
+        except asyncio.TimeoutError:
             pass
         finally:
             writer.transport.abort()

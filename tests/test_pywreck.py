@@ -93,6 +93,7 @@ def test_basic(
             port=port,
             ssl=False,
             timeout=0.2,
+            close_timeout=0.0,
         )
     )
     assert response.status == 200
