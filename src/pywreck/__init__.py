@@ -250,6 +250,7 @@ async def request(
     headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
+    close_timeout: Optional[float] = 1.0,
     ssl: Union[bool, ssl.SSLContext] = True,
 ) -> Response:
     """Make a full HTTP request
@@ -282,6 +283,10 @@ async def request(
     :param timeout: (optional) Timeout in seconds for the request.
         Default: 5 seconds.
     :type timeout: float
+    :param close_timeout: (optional) The amount of time to wait in seconds
+        for the connection to close before forcing the connection to close
+        via TCP RST. Default: 1 second
+    :type close_timeout: float
     :param ssl: (optional) Indicates if SSL is to be used in
         establishing the connection. Also accepts an SSLContext object.
         Default: True
@@ -295,6 +300,7 @@ async def request(
             host,
             port,
             ssl=ssl,
+            close_timeout=close_timeout,
         ) as connection:
             return await connection.request(
                 method,
@@ -317,9 +323,12 @@ async def get(
     headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
+    close_timeout: Optional[float] = 1.0,
     ssl: Union[bool, ssl.SSLContext] = True,
 ) -> Response:
-    return await request("GET", host, uri, payload, headers, port, timeout, ssl)
+    return await request(
+        "GET", host, uri, payload, headers, port, timeout, close_timeout, ssl
+    )
 
 
 async def head(
@@ -329,9 +338,12 @@ async def head(
     headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
+    close_timeout: Optional[float] = 1.0,
     ssl: Union[bool, ssl.SSLContext] = True,
 ) -> Response:
-    return await request("HEAD", host, uri, payload, headers, port, timeout, ssl)
+    return await request(
+        "HEAD", host, uri, payload, headers, port, timeout, close_timeout, ssl
+    )
 
 
 async def post(
@@ -341,9 +353,12 @@ async def post(
     headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
+    close_timeout: Optional[float] = 1.0,
     ssl: Union[bool, ssl.SSLContext] = True,
 ) -> Response:
-    return await request("POST", host, uri, payload, headers, port, timeout, ssl)
+    return await request(
+        "POST", host, uri, payload, headers, port, timeout, close_timeout, ssl
+    )
 
 
 async def put(
@@ -353,9 +368,12 @@ async def put(
     headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
+    close_timeout: Optional[float] = 1.0,
     ssl: Union[bool, ssl.SSLContext] = True,
 ) -> Response:
-    return await request("PUT", host, uri, payload, headers, port, timeout, ssl)
+    return await request(
+        "PUT", host, uri, payload, headers, port, timeout, close_timeout, ssl
+    )
 
 
 async def delete(
@@ -365,6 +383,9 @@ async def delete(
     headers: Optional[Mapping[str, str]] = None,
     port: int = 443,
     timeout: Optional[float] = 5.0,
+    close_timeout: Optional[float] = 1.0,
     ssl: Union[bool, ssl.SSLContext] = True,
 ) -> Response:
-    return await request("DELETE", host, uri, payload, headers, port, timeout, ssl)
+    return await request(
+        "DELETE", host, uri, payload, headers, port, timeout, close_timeout, ssl
+    )
