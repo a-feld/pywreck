@@ -14,11 +14,11 @@
 
 import asyncio
 
-SHUTDOWN_EVENTS = []
+SHUTDOWN_EVENTS: list[asyncio.Event] = []
 
 
-async def read_request(reader):
-    request = []
+async def read_request(reader: asyncio.StreamReader) -> bytes:
+    request: list[bytes] = []
     content_length = 0
 
     while True:
@@ -42,7 +42,10 @@ async def read_request(reader):
     return b"".join(request)
 
 
-async def handle_echo(reader, writer):
+async def handle_echo(
+    reader: asyncio.StreamReader,
+    writer: asyncio.StreamWriter,
+) -> None:
     while True:
         output = await read_request(reader)
         if not output:
@@ -56,7 +59,10 @@ async def handle_echo(reader, writer):
     await writer.wait_closed()
 
 
-async def handle_multi_response_headers(reader, writer):
+async def handle_multi_response_headers(
+    reader: asyncio.StreamReader,
+    writer: asyncio.StreamWriter,
+) -> None:
     await read_request(reader)
     writer.write(b"HTTP/1.1 200 OK\r\n")
     writer.write(b"foo:1:1\r\n")
@@ -67,7 +73,10 @@ async def handle_multi_response_headers(reader, writer):
     await writer.wait_closed()
 
 
-async def handle_chunked(reader, writer):
+async def handle_chunked(
+    reader: asyncio.StreamReader,
+    writer: asyncio.StreamWriter,
+) -> None:
     while True:
         output = await read_request(reader)
         if not output:
@@ -89,7 +98,10 @@ async def handle_chunked(reader, writer):
     await writer.wait_closed()
 
 
-async def handle_cookies(reader, writer):
+async def handle_cookies(
+    reader: asyncio.StreamReader,
+    writer: asyncio.StreamWriter,
+) -> None:
     await read_request(reader)
     writer.write(b"HTTP/1.1 200 OK\r\n")
     writer.write(b"set-cookie: foo=bar\r\n")
@@ -100,11 +112,17 @@ async def handle_cookies(reader, writer):
     await writer.wait_closed()
 
 
-async def handle_rst(_reader, writer):
+async def handle_rst(
+    _reader: asyncio.StreamReader,
+    writer: asyncio.StreamWriter,
+) -> None:
     writer.transport.abort()
 
 
-async def handle_fin(_reader, writer):
+async def handle_fin(
+    _reader: asyncio.StreamReader,
+    writer: asyncio.StreamWriter,
+) -> None:
     # EOF triggers TCP FIN
     writer.transport.write_eof()
 

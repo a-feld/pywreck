@@ -15,6 +15,7 @@
 import asyncio
 import functools
 import socket
+from typing import Any, Callable, Generator, cast
 
 import pytest
 
@@ -30,21 +31,28 @@ from .handlers import (
     handle_rst,
 )
 
+HandlerType = Callable[[asyncio.StreamReader, asyncio.StreamWriter], None]
+
 
 @pytest.fixture(scope="session")
-def loop():
+def loop() -> asyncio.AbstractEventLoop:
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     return loop
 
 
 @pytest.fixture
-def handler(request):
-    return request.param
+def handler(
+    request: pytest.FixtureRequest,
+) -> HandlerType:
+    return cast(HandlerType, request.param)
 
 
 @pytest.fixture
-def port(loop, handler):
+def port(
+    loop: asyncio.AbstractEventLoop,
+    handler: HandlerType,
+) -> Generator[int, Any, None]:
     # Get a random port
     s = socket.socket()
     s.bind(("", 0))
@@ -72,7 +80,11 @@ def port(loop, handler):
     ("get", "head", "post", "put", "delete"),
 )
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
-def test_basic(loop, port, method):
+def test_basic(
+    loop: asyncio.AbstractEventLoop,
+    port: int,
+    method: str,
+) -> None:
     response = loop.run_until_complete(
         getattr(pywreck, method)(
             "localhost",
@@ -101,8 +113,11 @@ def test_basic(loop, port, method):
 
 
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
-def test_multiple_requests_on_a_single_connection(loop, port):
-    def validate_response(response):
+def test_multiple_requests_on_a_single_connection(
+    loop: asyncio.AbstractEventLoop,
+    port: int,
+) -> None:
+    def validate_response(response: pywreck.Response) -> None:
         assert response.status == 200
         data = response.data
         expected_data = (
@@ -115,7 +130,7 @@ def test_multiple_requests_on_a_single_connection(loop, port):
         assert response.headers == {"content-length": str(len(expected_data))}
         assert data == expected_data
 
-    async def _async():
+    async def _async() -> None:
         connection = await pywreck.Connection.create(
             "localhost",
             port=port,
@@ -135,7 +150,10 @@ def test_multiple_requests_on_a_single_connection(loop, port):
 
 
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
-def test_payload(loop, port):
+def test_payload(
+    loop: asyncio.AbstractEventLoop,
+    port: int,
+) -> None:
     response = loop.run_until_complete(
         pywreck.post(
             "localhost",
@@ -164,7 +182,11 @@ def test_payload(loop, port):
     ("", "get", "post", "put", "delete"),
 )
 @pytest.mark.parametrize("handler", (handle_echo,), indirect=True)
-def test_default_headers_and_payload(loop, port, method):
+def test_default_headers_and_payload(
+    loop: asyncio.AbstractEventLoop,
+    port: int,
+    method: str,
+) -> None:
     if not method:
         method = "GET"
         f = functools.partial(pywreck.request, method, timeout=None)
@@ -184,7 +206,10 @@ def test_default_headers_and_payload(loop, port, method):
 
 
 @pytest.mark.parametrize("handler", (handle_multi_response_headers,), indirect=True)
-def test_multi_line_response_header(loop, port):
+def test_multi_line_response_header(
+    loop: asyncio.AbstractEventLoop,
+    port: int,
+) -> None:
     response = loop.run_until_complete(
         pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
     )
@@ -194,7 +219,10 @@ def test_multi_line_response_header(loop, port):
 
 
 @pytest.mark.parametrize("handler", (handle_cookies,), indirect=True)
-def test_cookies(loop, port):
+def test_cookies(
+    loop: asyncio.AbstractEventLoop,
+    port: int,
+) -> None:
     response = loop.run_until_complete(
         pywreck.get("localhost", "/", port=port, ssl=False, timeout=0.2)
     )
@@ -203,8 +231,11 @@ def test_cookies(loop, port):
 
 
 @pytest.mark.parametrize("handler", (handle_chunked,), indirect=True)
-def test_chunked(loop, port):
-    async def _async():
+def test_chunked(
+    loop: asyncio.AbstractEventLoop,
+    port: int,
+) -> None:
+    async def _async() -> None:
         connection = await pywreck.Connection.create(
             "localhost",
             port=port,
@@ -228,7 +259,10 @@ def test_chunked(loop, port):
 
 
 @pytest.mark.parametrize("handler", (handle_rst,), indirect=True)
-def test_transport_rst(loop, port):
+def test_transport_rst(
+    loop: asyncio.AbstractEventLoop,
+    port: int,
+) -> None:
     """A server may hard-close a connection with a RST"""
     with pytest.raises(ConnectionResetError):
         loop.run_until_complete(
@@ -237,7 +271,10 @@ def test_transport_rst(loop, port):
 
 
 @pytest.mark.parametrize("handler", (handle_fin,), indirect=True)
-def test_transport_fin(loop, port):
+def test_transport_fin(
+    loop: asyncio.AbstractEventLoop,
+    port: int,
+) -> None:
     """A server will sometimes close a connection gracefully with a FIN before
     a response is started"""
     with pytest.raises(IndexError):
