@@ -71,7 +71,7 @@ class Connection:
         host: str,
         port: int = 443,
         ssl: Union[bool, ssl.SSLContext] = True,
-        close_timeout: Optional[float] = 5.0,
+        close_timeout: Optional[float] = 1.0,
     ) -> "Connection":
         """Create a Connection
 
@@ -87,7 +87,7 @@ class Connection:
         :type ssl: bool or ssl.SSLContext
         :param close_timeout: (optional) The amount of time to wait in seconds
             for the connection to close before forcing the connection to close
-            via TCP RST. Default: 5 seconds
+            via TCP RST. Default: 1 second
         :type close_timeout: float
 
         :rtype: Connection
@@ -228,17 +228,16 @@ class Connection:
 
     async def close(self) -> None:
         """Close the connection"""
-        coro = self._close()
-        timeout = self._close_timeout
-        if timeout is not None:
-            return await asyncio.wait_for(coro, timeout=timeout)
-        return await coro
-
-    async def _close(self) -> None:
         writer = self._writer
         writer.close()
+        timeout = self._close_timeout
+        coro = writer.wait_closed()
+        if timeout is not None:
+            coro = asyncio.wait_for(coro, timeout=timeout)
         try:
-            await writer.wait_closed()
+            await coro
+        except TimeoutError:
+            pass
         finally:
             writer.transport.abort()
 
@@ -296,7 +295,6 @@ async def request(
             host,
             port,
             ssl=ssl,
-            close_timeout=None,
         ) as connection:
             return await connection.request(
                 method,
