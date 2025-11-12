@@ -190,7 +190,7 @@ def test_default_headers_and_payload(
 ) -> None:
     if not method:
         method = "GET"
-        f = functools.partial(pywreck.request, method, timeout=None)
+        f = functools.partial(pywreck.request, method, timeout=None, close_timeout=None)
     else:
         f = getattr(pywreck, method)
 
