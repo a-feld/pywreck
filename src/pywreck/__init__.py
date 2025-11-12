@@ -17,7 +17,7 @@ import os.path
 import ssl
 from dataclasses import dataclass
 from types import TracebackType
-from typing import Mapping, Optional, Type, Union
+from typing import Mapping, Type
 
 try:
     with open(os.path.join(os.path.dirname(__file__), "version.txt")) as f:
@@ -50,7 +50,7 @@ class Connection:
         writer: asyncio.StreamWriter,
         lock: asyncio.Lock,
         host: str,
-        close_timeout: Optional[float],
+        close_timeout: float | None,
     ):
         self._reader = reader
         self._writer = writer
@@ -70,8 +70,8 @@ class Connection:
         cls,
         host: str,
         port: int = 443,
-        ssl: Union[bool, ssl.SSLContext] = True,
-        close_timeout: Optional[float] = 1.0,
+        ssl: bool | ssl.SSLContext = True,
+        close_timeout: float | None = 1.0,
     ) -> "Connection":
         """Create a Connection
 
@@ -103,8 +103,8 @@ class Connection:
         method: str,
         uri: str,
         payload: bytes = b"",
-        headers: Optional[Mapping[str, str]] = None,
-        timeout: Optional[float] = 5.0,
+        headers: Mapping[str, str] | None = None,
+        timeout: float | None = 5.0,
     ) -> Response:
         """Make an HTTP request
 
@@ -145,7 +145,7 @@ class Connection:
         method: str,
         uri: str,
         payload: bytes = b"",
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
     ) -> Response:
         # Since the connection can be a shared resource, we must ensure
         # exclusive access for the duration of the request/response cycle
@@ -220,9 +220,9 @@ class Connection:
 
     async def __aexit__(
         self,
-        exc: Optional[Type[BaseException]],
-        value: Optional[BaseException],
-        tb: Optional[TracebackType],
+        exc: Type[BaseException] | None,
+        value: BaseException | None,
+        tb: TracebackType | None,
     ) -> None:
         await self.close()
 
@@ -247,11 +247,11 @@ async def request(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Mapping[str, str]] = None,
+    headers: Mapping[str, str] | None = None,
     port: int = 443,
-    timeout: Optional[float] = 5.0,
-    close_timeout: Optional[float] = 1.0,
-    ssl: Union[bool, ssl.SSLContext] = True,
+    timeout: float | None = 5.0,
+    close_timeout: float | None = 1.0,
+    ssl: bool | ssl.SSLContext = True,
 ) -> Response:
     """Make a full HTTP request
 
@@ -320,11 +320,11 @@ async def get(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Mapping[str, str]] = None,
+    headers: Mapping[str, str] | None = None,
     port: int = 443,
-    timeout: Optional[float] = 5.0,
-    close_timeout: Optional[float] = 1.0,
-    ssl: Union[bool, ssl.SSLContext] = True,
+    timeout: float | None = 5.0,
+    close_timeout: float | None = 1.0,
+    ssl: bool | ssl.SSLContext = True,
 ) -> Response:
     return await request(
         "GET", host, uri, payload, headers, port, timeout, close_timeout, ssl
@@ -335,11 +335,11 @@ async def head(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Mapping[str, str]] = None,
+    headers: Mapping[str, str] | None = None,
     port: int = 443,
-    timeout: Optional[float] = 5.0,
-    close_timeout: Optional[float] = 1.0,
-    ssl: Union[bool, ssl.SSLContext] = True,
+    timeout: float | None = 5.0,
+    close_timeout: float | None = 1.0,
+    ssl: bool | ssl.SSLContext = True,
 ) -> Response:
     return await request(
         "HEAD", host, uri, payload, headers, port, timeout, close_timeout, ssl
@@ -350,11 +350,11 @@ async def post(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Mapping[str, str]] = None,
+    headers: Mapping[str, str] | None = None,
     port: int = 443,
-    timeout: Optional[float] = 5.0,
-    close_timeout: Optional[float] = 1.0,
-    ssl: Union[bool, ssl.SSLContext] = True,
+    timeout: float | None = 5.0,
+    close_timeout: float | None = 1.0,
+    ssl: bool | ssl.SSLContext = True,
 ) -> Response:
     return await request(
         "POST", host, uri, payload, headers, port, timeout, close_timeout, ssl
@@ -365,11 +365,11 @@ async def put(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Mapping[str, str]] = None,
+    headers: Mapping[str, str] | None = None,
     port: int = 443,
-    timeout: Optional[float] = 5.0,
-    close_timeout: Optional[float] = 1.0,
-    ssl: Union[bool, ssl.SSLContext] = True,
+    timeout: float | None = 5.0,
+    close_timeout: float | None = 1.0,
+    ssl: bool | ssl.SSLContext = True,
 ) -> Response:
     return await request(
         "PUT", host, uri, payload, headers, port, timeout, close_timeout, ssl
@@ -380,11 +380,11 @@ async def delete(
     host: str,
     uri: str,
     payload: bytes = b"",
-    headers: Optional[Mapping[str, str]] = None,
+    headers: Mapping[str, str] | None = None,
     port: int = 443,
-    timeout: Optional[float] = 5.0,
-    close_timeout: Optional[float] = 1.0,
-    ssl: Union[bool, ssl.SSLContext] = True,
+    timeout: float | None = 5.0,
+    close_timeout: float | None = 1.0,
+    ssl: bool | ssl.SSLContext = True,
 ) -> Response:
     return await request(
         "DELETE", host, uri, payload, headers, port, timeout, close_timeout, ssl
