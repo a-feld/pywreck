@@ -14,4 +14,4 @@
 
 from setuptools import setup
 
-setup(name="pywreck", use_scm_version={"write_to": "src/pywreck/version.txt"})
+setup(name="pywreck", use_scm_version={"version_file": "src/pywreck/version.txt"})
